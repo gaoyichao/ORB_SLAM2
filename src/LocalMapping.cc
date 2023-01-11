@@ -697,9 +697,9 @@ void LocalMapping::KeyFrameCulling()
 
 cv::Mat LocalMapping::SkewSymmetricMatrix(const cv::Mat &v)
 {
-    return (cv::Mat_<float>(3,3) <<             0, -v.at<float>(2), v.at<float>(1),
-            v.at<float>(2),               0,-v.at<float>(0),
-            -v.at<float>(1),  v.at<float>(0),              0);
+    return (cv::Mat_<float>(3,3) << 0, -v.at<float>(2), v.at<float>(1),
+                                    v.at<float>(2), 0,-v.at<float>(0),
+                                   -v.at<float>(1), v.at<float>(0), 0);
 }
 
 void LocalMapping::RequestReset()
