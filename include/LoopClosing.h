@@ -53,7 +53,7 @@ public:
 
     //! @brief 关键帧和位姿映射关系
     //!
-    //! @detail std::map 的模板有四个参数，分别是
+    //! std::map 的模板有四个参数，分别是
     //! Key(map::key_type) 对应 KeyFrame*；
     //! T(map::mapped_type) 对应 g2o::Sim3；
     //! Compare(map::key_compare) 对应 std::less<KeyFrame*> 用于比较键值

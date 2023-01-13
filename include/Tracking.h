@@ -61,6 +61,7 @@ public:
     //! @param [in] pVoc           字典对象
     //! @param [in] pFrameDrawer   帧渲染器
     //! @param [in] pMapDrawer     地图渲染器
+    //! @param [in] pMap           地图对象
     //! @param [in] pKFDB          关键帧数据库对象
     //! @param [in] strSettingPath 配置文件路径
     //! @param [in] sensor         相机类型 MONOCULAR=0, STEREO=1, RGBD=2
@@ -91,7 +92,7 @@ public:
     //!
     //! 提取RGB图像特征，实现单目相机的跟踪
     //!
-    //! @param [in] imRGB     彩色图或灰度图
+    //! @param [in] im        彩色图或灰度图
     //! @param [in] timestamp 时间戳
     //! @return 相机位姿
     cv::Mat GrabImageMonocular(const cv::Mat &im, const double &timestamp);
