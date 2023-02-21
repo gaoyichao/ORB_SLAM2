@@ -76,7 +76,7 @@ public:
     //! @param [in] imRectRight 校畸变之后的右目图像
     //! @param [in] timestamp   时间戳
     //! @return 相机位姿
-    cv::Mat GrabImageStereo(const cv::Mat &imRectLeft,const cv::Mat &imRectRight, const double &timestamp);
+    cv::Mat GrabImageStereo(const cv::Mat &imRectLeft,const cv::Mat &imRectRight, double timestamp);
 
     //! @brief 预处理输入图像数据，调用 Track 函数完成相机位姿跟踪
     //!
@@ -86,7 +86,7 @@ public:
     //! @param [in] imD       深度图
     //! @param [in] timestamp 时间戳
     //! @return 相机位姿
-    cv::Mat GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const double &timestamp);
+    cv::Mat GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, double timestamp);
 
     //! @brief 预处理输入图像数据，调用 Track 函数完成相机位姿跟踪
     //!
@@ -95,7 +95,7 @@ public:
     //! @param [in] im        彩色图或灰度图
     //! @param [in] timestamp 时间戳
     //! @return 相机位姿
-    cv::Mat GrabImageMonocular(const cv::Mat &im, const double &timestamp);
+    cv::Mat GrabImageMonocular(const cv::Mat & im, double timestamp);
 
     //! @brief 设置局部地图管理器
     //! @param [in] pLocalMapper 局部地图管理器
@@ -231,6 +231,8 @@ protected:
     //! @brief 新建关键帧
     void CreateNewKeyFrame();
 
+    //! @brief 销毁初始化器 mpInitializer
+    void FreeInitializer();
 
     //! @brief 标志着地图中没有找到相应的匹配点(只适用于纯定位的模式)
     //!

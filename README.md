@@ -1,5 +1,14 @@
 # [ORB-SLAM源码解读](https://gaoyichao.com/Xiaotu/?book=ORB_SLAM源码解读&title=index)
 
+* 支持 OpenCV4
+* Doxygen 生成文档
+
+
+Doxygen 安装方法
+```
+sudo apt-get install doxygen 
+sudo apt-get install graphviz
+```
 
 # ORB-SLAM2
 **Authors:** [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2))

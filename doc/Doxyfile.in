@@ -6,7 +6,7 @@ OUTPUT_DIRECTORY    =  docs
 INPUT                  = @CMAKE_CURRENT_LIST_DIR@/src \
                          @CMAKE_CURRENT_LIST_DIR@/include
 
-FILE_PATTERNS          = *.h *.hpp *.cpp *.md
+FILE_PATTERNS          = *.cpp *.cc *.md *.h *.hpp 
 EXCLUDE                = @CMAKE_CURRENT_LIST_DIR@/build
 RECURSIVE              = YES # 递归遍历子目录
 OPTIMIZE_OUTPUT_FOR_C  = NO
@@ -50,3 +50,5 @@ SOURCE_BROWSER        = YES
 GENERATE_HTML         = YES
 GENERATE_TREEVIEW     = YES
 
+# Mathjax 公式
+USE_MATHJAX           = YES
