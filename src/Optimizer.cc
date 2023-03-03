@@ -248,7 +248,6 @@ int Optimizer::PoseOptimization(Frame *pFrame)
     g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(solver_ptr);
     optimizer.setAlgorithm(solver);
 
-    int nInitialCorrespondences=0;
 
     // Set Frame vertex
     g2o::VertexSE3Expmap * vSE3 = new g2o::VertexSE3Expmap();
@@ -257,6 +256,7 @@ int Optimizer::PoseOptimization(Frame *pFrame)
     vSE3->setFixed(false);
     optimizer.addVertex(vSE3);
 
+    int nInitialCorrespondences=0;
     // Set MapPoint vertices
     const int N = pFrame->N;
 

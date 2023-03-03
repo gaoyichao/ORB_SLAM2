@@ -1355,96 +1355,96 @@ int ORBmatcher::SearchByProjection(Frame &CurrentFrame, const Frame &LastFrame, 
     {
         MapPoint* pMP = LastFrame.mvpMapPoints[i];
 
-        if(pMP)
-        {
-            if(!LastFrame.mvbOutlier[i])
-            {
-                // Project
-                cv::Mat x3Dw = pMP->GetWorldPos();
-                cv::Mat x3Dc = Rcw*x3Dw+tcw;
+        if (!pMP)
+            continue;
 
-                const float xc = x3Dc.at<float>(0);
-                const float yc = x3Dc.at<float>(1);
-                const float invzc = 1.0/x3Dc.at<float>(2);
+        if(LastFrame.mvbOutlier[i])
+            continue;
 
-                if(invzc<0)
-                    continue;
+       // Project
+       cv::Mat x3Dw = pMP->GetWorldPos();
+       cv::Mat x3Dc = Rcw*x3Dw+tcw;
 
-                float u = CurrentFrame.fx*xc*invzc+CurrentFrame.cx;
-                float v = CurrentFrame.fy*yc*invzc+CurrentFrame.cy;
+       const float xc = x3Dc.at<float>(0);
+       const float yc = x3Dc.at<float>(1);
+       const float invzc = 1.0/x3Dc.at<float>(2);
 
-                if(u<CurrentFrame.mnMinX || u>CurrentFrame.mnMaxX)
-                    continue;
-                if(v<CurrentFrame.mnMinY || v>CurrentFrame.mnMaxY)
-                    continue;
+       if(invzc<0)
+           continue;
 
-                int nLastOctave = LastFrame.mvKeys[i].octave;
+       float u = CurrentFrame.fx*xc*invzc+CurrentFrame.cx;
+       float v = CurrentFrame.fy*yc*invzc+CurrentFrame.cy;
 
-                // Search in a window. Size depends on scale
-                float radius = th*CurrentFrame.mvScaleFactors[nLastOctave];
+       if(u<CurrentFrame.mnMinX || u>CurrentFrame.mnMaxX)
+           continue;
+       if(v<CurrentFrame.mnMinY || v>CurrentFrame.mnMaxY)
+           continue;
 
-                vector<size_t> vIndices2;
+       int nLastOctave = LastFrame.mvKeys[i].octave;
 
-                if(bForward)
-                    vIndices2 = CurrentFrame.GetFeaturesInArea(u,v, radius, nLastOctave);
-                else if(bBackward)
-                    vIndices2 = CurrentFrame.GetFeaturesInArea(u,v, radius, 0, nLastOctave);
-                else
-                    vIndices2 = CurrentFrame.GetFeaturesInArea(u,v, radius, nLastOctave-1, nLastOctave+1);
+       // Search in a window. Size depends on scale
+       float radius = th*CurrentFrame.mvScaleFactors[nLastOctave];
 
-                if(vIndices2.empty())
-                    continue;
+       vector<size_t> vIndices2;
 
-                const cv::Mat dMP = pMP->GetDescriptor();
+       if(bForward)
+           vIndices2 = CurrentFrame.GetFeaturesInArea(u,v, radius, nLastOctave);
+       else if(bBackward)
+           vIndices2 = CurrentFrame.GetFeaturesInArea(u,v, radius, 0, nLastOctave);
+       else
+           vIndices2 = CurrentFrame.GetFeaturesInArea(u,v, radius, nLastOctave-1, nLastOctave+1);
 
-                int bestDist = 256;
-                int bestIdx2 = -1;
+       if(vIndices2.empty())
+           continue;
 
-                for(vector<size_t>::const_iterator vit=vIndices2.begin(), vend=vIndices2.end(); vit!=vend; vit++)
-                {
-                    const size_t i2 = *vit;
-                    if(CurrentFrame.mvpMapPoints[i2])
-                        if(CurrentFrame.mvpMapPoints[i2]->Observations()>0)
-                            continue;
+       const cv::Mat dMP = pMP->GetDescriptor();
 
-                    if(CurrentFrame.mvuRight[i2]>0)
-                    {
-                        const float ur = u - CurrentFrame.mbf*invzc;
-                        const float er = fabs(ur - CurrentFrame.mvuRight[i2]);
-                        if(er>radius)
-                            continue;
-                    }
+       int bestDist = 256;
+       int bestIdx2 = -1;
 
-                    const cv::Mat &d = CurrentFrame.mDescriptors.row(i2);
+       for(vector<size_t>::const_iterator vit=vIndices2.begin(), vend=vIndices2.end(); vit!=vend; vit++)
+       {
+           const size_t i2 = *vit;
+           if(CurrentFrame.mvpMapPoints[i2])
+               if(CurrentFrame.mvpMapPoints[i2]->Observations()>0)
+                   continue;
 
-                    const int dist = DescriptorDistance(dMP,d);
+           if(CurrentFrame.mvuRight[i2]>0)
+           {
+               const float ur = u - CurrentFrame.mbf*invzc;
+               const float er = fabs(ur - CurrentFrame.mvuRight[i2]);
+               if(er>radius)
+                   continue;
+           }
 
-                    if(dist<bestDist)
-                    {
-                        bestDist=dist;
-                        bestIdx2=i2;
-                    }
-                }
+           const cv::Mat &d = CurrentFrame.mDescriptors.row(i2);
 
-                if(bestDist<=TH_HIGH)
-                {
-                    CurrentFrame.mvpMapPoints[bestIdx2]=pMP;
-                    nmatches++;
+           const int dist = DescriptorDistance(dMP,d);
 
-                    if(mbCheckOrientation)
-                    {
-                        float rot = LastFrame.mvKeysUn[i].angle-CurrentFrame.mvKeysUn[bestIdx2].angle;
-                        if(rot<0.0)
-                            rot+=360.0f;
-                        int bin = round(rot*factor);
-                        if(bin==HISTO_LENGTH)
-                            bin=0;
-                        assert(bin>=0 && bin<HISTO_LENGTH);
-                        rotHist[bin].push_back(bestIdx2);
-                    }
-                }
-            }
-        }
+           if(dist<bestDist)
+           {
+               bestDist=dist;
+               bestIdx2=i2;
+           }
+       }
+
+       if(bestDist > TH_HIGH)
+           continue;
+
+       CurrentFrame.mvpMapPoints[bestIdx2]=pMP;
+       nmatches++;
+
+       if(mbCheckOrientation)
+       {
+           float rot = LastFrame.mvKeysUn[i].angle-CurrentFrame.mvKeysUn[bestIdx2].angle;
+           if(rot<0.0)
+               rot+=360.0f;
+           int bin = round(rot*factor);
+           if(bin==HISTO_LENGTH)
+               bin=0;
+           assert(bin>=0 && bin<HISTO_LENGTH);
+           rotHist[bin].push_back(bestIdx2);
+       }
     }
 
     //Apply rotation consistency
